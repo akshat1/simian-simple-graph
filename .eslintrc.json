@@ -1,0 +1,6 @@
+{
+  "extends": "simian",
+  "parserOptions": {
+    "sourceType": "module"
+  }
+}
