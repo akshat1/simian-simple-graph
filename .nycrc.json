@@ -3,5 +3,5 @@
   "include": [
     "src/**/*.js"
   ],
-  "reporter": ["html"]
+  "reporter": ["html", "lcov"]
 }
