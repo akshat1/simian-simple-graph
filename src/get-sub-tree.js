@@ -1,6 +1,14 @@
 import { Graph } from './model';
 
-export const getEdgesFrom = (node, edges) => edges.filter(e => e.from === node);
+/**
+ * Returns edges that start from the indicated node.
+ *
+ * @function
+ * @param {Node} node - starting node.
+ * @param {Edge[]} edges - the edhes to filter.
+ * @returns {Edge[]} - filtered edges.
+ */
+export const getEdgesStartingFrom = (node, edges) => edges.filter(e => e.from === node);
 
 /**
  * @function
@@ -18,7 +26,7 @@ export const getSubTree = (root, graph) => {
       continue;
     }
 
-    const newEdges = getEdgesFrom(newRoot, graph.edges);
+    const newEdges = getEdgesStartingFrom(newRoot, graph.edges);
     processedNodes[newRoot] = true;
     subTreeEdges.push(...newEdges);
     nodesToLookFor.push(...newEdges.map(e => e.to));
