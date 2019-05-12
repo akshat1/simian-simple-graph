@@ -1,22 +1,4 @@
 /**
- * At the moment, a Node is just a string.
- * @typedef {string} Node
- */
-
-/**
- * Edge constructor
- * @constructor
- * @param {Node} from - Origin node of the edge.
- * @param {Node} to - Target node of the edge.
- */
-export function Edge (from, to) { 
-  /** @property {Node} - Origin node of the edge. */
-  this.from = from;
-  /** @property {Node} - Target node of the edge. */
-  this.to = to;
-}
-
-/**
  * Given an Iterable of Edges, return the set of Nodes.
  * @function
  * @param {Iterable.<Edge>} edges -
@@ -36,9 +18,11 @@ export const nodesFromEdges = edges => {
  * @constructor
  * @param {Iterable.<Edge>} edges - Edges which comprise the graph.
  */
-export function Graph (edges) {
+function Graph (edges) {
   /** @property {Set.<Edge>} - Edges which comprise the graph. */
   this.edges = new Set(edges);
   /** @property {Set.<Node>} - Nodes of the graph, inferred fromt he edges. */
   this.nodes = nodesFromEdges(edges);
 }
+
+export default Graph;
