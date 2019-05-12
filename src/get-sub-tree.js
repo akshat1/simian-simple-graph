@@ -26,13 +26,13 @@ export const getSubTree = (root, graph) => {
       continue;
     }
 
-    const newEdges = getEdgesStartingFrom(newRoot, graph.edges);
+    const newEdges = getEdgesStartingFrom(newRoot, Array.from(graph.edges));
     processedNodes[newRoot] = true;
     subTreeEdges.push(...newEdges);
     nodesToLookFor.push(...newEdges.map(e => e.to));
   }
 
-  const newTree = Graph(subTreeEdges);
+  const newTree = new Graph(subTreeEdges);
 
   return newTree;
 }
