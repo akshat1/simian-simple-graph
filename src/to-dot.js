@@ -5,10 +5,13 @@
  * @returns {string} - The graph described in the DOT language.
  */
 export default ({edges, nodes}) => {
-  const strNodes = Array.from(nodes).map(n => `"${n}" [label="${n}"]`);
-  const strEdges = edges.map(e => `"${e.from}" -> "${e.to}"`);
-  return `digraph G {
-    ${strNodes.join('\n')}
-    ${strEdges.join('\n')}
-  }`
+  // we sort edges only so that we can unit test the output.
+  const strNodes = Array.from(nodes).map(n => `"${n}" [label="${n}"]`).sort();
+  const strEdges = Array.from(edges).map(e => `"${e.from}" -> "${e.to}"`).sort();
+  return [
+    'digraph G {',
+    strNodes.join('\n'),
+    strEdges.join('\n'),
+    '}',
+  ].join('\n');
 }
