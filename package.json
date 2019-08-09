@@ -4,7 +4,6 @@
   "description": "A quick and dirty DAG data structure.",
   "main": "lib/index.js",
   "scripts": {
-    "build": "babel src -d lib",
     "doc": "jsdoc -c jsdoc.conf.json",
     "test": "nyc mocha --require @babel/register --recursive test"
   },
@@ -25,10 +24,6 @@
   },
   "homepage": "https://github.com/akshat1/simian-simple-graph#readme",
   "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.4",
-    "@babel/preset-env": "^7.4.4",
-    "@babel/register": "^7.4.4",
     "codecov": "^3.4.0",
     "eslint": "^5.16.0",
     "eslint-config-simian": "^1.1.0",
