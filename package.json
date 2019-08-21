@@ -27,9 +27,13 @@
     "codecov": "^3.4.0",
     "eslint": "^5.16.0",
     "eslint-config-simian": "^1.1.0",
-    "jsdoc": "^3.6.1",
+    "jsdoc": "^3.6.3",
     "mocha": "^6.1.4",
     "nyc": "^14.1.0",
+    "sinon": "^7.4.1",
     "toast-jsdoc": "^1.0.2"
+  },
+  "dependencies": {
+    "immutable": "^4.0.0-rc.12"
   }
 }
