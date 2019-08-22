@@ -2,6 +2,12 @@ const { Edge } = require('../lib/Edge');
 const { Graph } = require('../lib/Graph');
 const assert = require('assert');
 
+function assertIsMemoized(func) {
+  return function() {
+    assert.ok(typeof func._clearCache === 'function');
+  };
+}
+
 describe('Graph', function() {
   describe('getSubTree', function() {
     it('should supply a simple subTree', function() {
@@ -31,9 +37,7 @@ describe('Graph', function() {
       assert.equal(Graph.toString(actualSubTree), Graph.toString(expectedSubTree));
     });
 
-    it('should be memoized', function() {
-      assert.ok(typeof Graph.getSubTree._clearCache === 'function');
-    });
+    it('should be memoized', assertIsMemoized(Graph.getSubTree));
   });
 
   describe('invert', function() {
@@ -53,9 +57,7 @@ describe('Graph', function() {
       assert.equal(Graph.toString(iGraph), expectedString);
     });
 
-    it('should be memoized', function() {
-      assert.ok(typeof Graph.invert._clearCache === 'function');
-    });
+    it('should be memoized', assertIsMemoized(Graph.invert));
   });
 
   describe('Ancestors / Descendents', function() {
@@ -89,9 +91,38 @@ describe('Graph', function() {
         );
       });
 
-      it('should be memoized', function() {
-        assert.ok(typeof Graph.getDescendents._clearCache === 'function');
-      });
+      it('should be memoized', assertIsMemoized(Graph.getDescendents));
     });
-  })
+  });
+
+  describe('addEdge', function() {
+    it('should not mutate the original graph', function() {
+      const gA = new Graph([
+        new Edge('a', 'b'),
+        new Edge('a', 'c'),
+        new Edge('a', 'd'),
+      ]);
+
+      const before = Array.from(Graph.getEdges(gA).values()).map(Edge.toString).join(',');
+      Graph.addEdge(gA, new Edge('a', 'e'));
+      const after = Array.from(Graph.getEdges(gA).values()).map(Edge.toString).join(',');
+      assert.equal(after, before);
+    });
+
+    it('should return a new graph with the old edges + new edges', function() {
+      const gA = new Graph([
+        new Edge('a', 'b'),
+        new Edge('a', 'c'),
+        new Edge('a', 'd'),
+      ]);
+      const a2E = new Edge('a', 'e');
+      const a2F = new Edge('a', 'f');
+      const gB = Graph.addEdge(gA, a2E, a2F);
+      const edgesInB = Graph.getEdges(gB);
+      assert.ok(edgesInB.has(a2E));
+      assert.ok(edgesInB.has(a2F));
+    });
+
+    it('should be memoized', assertIsMemoized(Graph.addEdge));
+  });
 });

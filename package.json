@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "doc": "jsdoc -c jsdoc.conf.json",
-    "test": "mocha --recursive test"
+    "test": "nyc mocha --recursive test"
   },
   "repository": {
     "type": "git",
@@ -34,6 +34,7 @@
     "toast-jsdoc": "^1.0.2"
   },
   "dependencies": {
+    "blueimp-md5": "^2.11.1",
     "immutable": "^4.0.0-rc.12"
   }
 }
