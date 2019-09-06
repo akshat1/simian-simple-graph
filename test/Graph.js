@@ -1,6 +1,7 @@
 const { Edge } = require('../lib/Edge');
 const { Graph } = require('../lib/Graph');
 const assert = require('assert');
+const sinon = require('sinon');
 
 function assertIsMemoized(func) {
   return function() {
@@ -124,5 +125,91 @@ describe('Graph', function() {
     });
 
     it('should be memoized', assertIsMemoized(Graph.addEdge));
+  });
+
+  describe('breadthFirst', function() {
+    const graph = new Graph([
+      new Edge('a', 'aa'),
+      new Edge('a', 'ab'),
+      new Edge('a', 'ac'),
+      new Edge('ab', 'aba'),
+      new Edge('ab', 'abb'),
+      new Edge('ab', 'abc'),
+      new Edge('abb', 'abba'),
+      new Edge('abb', 'abbb'),
+      new Edge('abb', 'abbc'),
+    ]);
+
+    it('should call fn for each node in the graph', function() {
+      const fn = sinon.stub();
+      Graph.breadthFirst(graph, 'a', fn);
+
+      [
+        ['aa', ['a']],
+        ['ab', ['a']],
+        ['ac', ['a']],
+        ['aba', ['a', 'ab']],
+        ['abb', ['a', 'ab']],
+        ['abc', ['a', 'ab']],
+        ['abba', ['a', 'ab', 'abb']],
+        ['abbb', ['a', 'ab', 'abb']],
+        ['abbc', ['a', 'ab', 'abb']],
+      ].forEach(args => assert.ok(fn.calledWithExactly(...args)));
+    });
+
+    it('should call fn for all nodes on a given depth before proceeding to the next greater depth', function() {
+      const fn = sinon.stub();
+      Graph.breadthFirst(graph, 'a', fn);
+      let previousDepth = 0;
+      for(let [, ancestors] of fn.args) {
+        const currentDepth = ancestors.length;
+        if (currentDepth < previousDepth) {
+          assert.fail(`Encountered depth ${currentDepth} after ${previousDepth}`);
+        }
+
+        previousDepth = currentDepth;
+      }
+    });
+
+    it('should silently avoid cycles', function() {
+      assert.doesNotThrow(() => {
+        const cyclicG = new Graph([
+          new Edge('a', 'b'),
+          new Edge('a', 'c'),
+          new Edge('a', 'd'),
+          new Edge('b', 'e'),
+          new Edge('e', 'a'),
+        ]);
+  
+        const fn = sinon.stub();
+        Graph.breadthFirst(cyclicG, 'a', fn);
+      });
+    });
+
+    it('should call fn for a given level on sorted nodes if a sortEdgesForLevel function is provided', function() {
+      // A single level for simplicity
+      const edges = [
+        new Edge('z', 'a'),
+        new Edge('z', 'b'),
+        new Edge('z', 'c'),
+        new Edge('z', 'd'),
+        new Edge('z', 'e'),
+      ];
+      const simpleG = new Graph(edges);
+
+      const fn = sinon.stub();
+      const sorter = sinon.stub().returns(edges.reverse());
+      Graph.breadthFirst(simpleG, 'z', fn, sorter);
+      assert.deepEqual(
+        fn.args,
+        [
+          ['e', ['z']],
+          ['d', ['z']],
+          ['c', ['z']],
+          ['b', ['z']],
+          ['a', ['z']],
+        ],
+      )
+    });
   });
 });
