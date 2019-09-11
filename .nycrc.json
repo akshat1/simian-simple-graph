@@ -4,8 +4,7 @@
     "node_modules/",
     "test/",
     "coverage/",
-    "docs",
-    "lib/"
+    "docs"
   ],
   "reporter": ["lcov"]
 }
