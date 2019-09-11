@@ -140,7 +140,7 @@ describe('Graph', function() {
       new Edge('abb', 'abbc'),
     ]);
 
-    it('should call fn for each node in the graph', function() {
+    it('should call fn for each node in the subtree', function() {
       const fn = sinon.stub();
       Graph.breadthFirst(graph, 'a', fn);
 
@@ -203,6 +203,7 @@ describe('Graph', function() {
       assert.deepEqual(
         fn.args,
         [
+          ['z', []],
           ['e', ['z']],
           ['d', ['z']],
           ['c', ['z']],
@@ -210,6 +211,65 @@ describe('Graph', function() {
           ['a', ['z']],
         ],
       )
+    });
+  });
+
+  describe('depthFirst', function() {
+    it('should call fn for each node in the subtree', function() {
+      const graph = new Graph([
+        new Edge('a', 'aa'),
+        new Edge('a', 'ab'),
+        new Edge('a', 'ac'),
+        new Edge('aa', 'aaa'),
+        new Edge('aa', 'aab'),
+        new Edge('aa', 'aac'),
+        new Edge('aab', 'aaba'),
+        new Edge('ab', 'aba'),
+        new Edge('ab', 'abb'),
+        new Edge('ac', 'aca'),
+        new Edge('ac', 'acb'),
+        new Edge('ac', 'acc'),
+        new Edge('ac', 'acd'),
+      ]);
+      const fn = sinon.stub();
+      const sorter = nodes => nodes.sort();
+
+      Graph.depthFirst(graph, 'a', fn, sorter);
+
+      assert.deepEqual(
+        fn.args,
+        [
+          ['a', []],
+          ['aa', ['a']],
+          ['aaa', ['a', 'aa']],
+          ['aab', ['a', 'aa']],
+          ['aaba', ['a', 'aa', 'aab']],
+          ['aac', ['a', 'aa']],
+          ['ab', ['a']],
+          ['abb', ['a', 'ab']],
+          ['aba', ['a', 'ab']],
+          ['ac', ['a']],
+          ['aca', ['a', 'ac']],
+          ['acb', ['a', 'ac']],
+          ['acc', ['a', 'ac']],
+          ['acd', ['a', 'ac']],
+        ]
+      );
+    });
+
+    it('should silently avoid cycles', () => {
+      assert.doesNotThrow(() => {
+        const cyclicG = new Graph([
+          new Edge('a', 'b'),
+          new Edge('a', 'c'),
+          new Edge('a', 'd'),
+          new Edge('b', 'e'),
+          new Edge('e', 'a'),
+        ]);
+  
+        const fn = sinon.stub();
+        Graph.depthFirst(cyclicG, 'a', fn);
+      });
     });
   });
 });
