@@ -9,6 +9,9 @@
     "lint": "eslint lib",
     "test": "nyc mocha --recursive test"
   },
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/akshat1/simian-simple-graph.git"
